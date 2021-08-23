@@ -9,6 +9,7 @@
 package displays
 
 import (
+	"strconv"
 	"unsafe"
 )
 
@@ -25,4 +26,14 @@ func (display *Display) Equals(dspl *Display) bool {
 		return display.InternalData == dspl.InternalData
 	}
 	return false
+}
+
+// String returns properties of display as string.
+func (display *Display) String() string {
+	str := strconv.Itoa(display.X) + " " + strconv.Itoa(display.Y)
+	str += " " + strconv.Itoa(display.Width) + " " + strconv.Itoa(display.Height)
+	if display.Default {
+		str += " (default)"
+	}
+	return str
 }
