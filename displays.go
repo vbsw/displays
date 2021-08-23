@@ -5,7 +5,7 @@
  *        http://www.boost.org/LICENSE_1_0.txt)
  */
 
-// Package displays provides a list of displays with their current resolution.
+// Package displays provides functions to query displays and their current resolution.
 package displays
 
 import (
