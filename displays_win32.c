@@ -19,31 +19,31 @@ typedef struct {
 } display_t;
 
 typedef struct {
-	display_t *displays;
+	display_t *ptr;
 	int length;
-} data_t;
+} dspl_arr_t;
 
 static void display_proc(HMONITOR a, HDC b, LPRECT c, LPARAM d) {
-	data_t *data = (data_t*)d;
-	if (data->displays == NULL) {
-		data->displays = (display_t*)malloc(sizeof(display_t) * MAX_DISPLAYS);
+	dspl_arr_t *dspl_arr = (dspl_arr_t*)d;
+	if (dspl_arr->ptr == NULL) {
+		dspl_arr->ptr = (display_t*)malloc(sizeof(display_t) * MAX_DISPLAYS);
 	}
-	if (data->displays && data->length < MAX_DISPLAYS) {
-		data->displays[data->length].x = c->left;
-		data->displays[data->length].y = c->top;
-		data->displays[data->length].width = c->right - c->left;
-		data->displays[data->length].height = c->bottom - c->top;
-		data->displays[data->length].is_default = 0;
-		data->displays[data->length].hndl = a;
-		data->length++;
+	if (dspl_arr->ptr && dspl_arr->length < MAX_DISPLAYS) {
+		dspl_arr->ptr[dspl_arr->length].x = c->left;
+		dspl_arr->ptr[dspl_arr->length].y = c->top;
+		dspl_arr->ptr[dspl_arr->length].width = c->right - c->left;
+		dspl_arr->ptr[dspl_arr->length].height = c->bottom - c->top;
+		dspl_arr->ptr[dspl_arr->length].is_default = 0;
+		dspl_arr->ptr[dspl_arr->length].hndl = a;
+		dspl_arr->length++;
 	}
 }
 
-static void sort_displays(data_t *const data) {
-	const int length = data->length;
+static void sort_displays(dspl_arr_t *const dspl_arr) {
+	const int length = dspl_arr->length;
 	if (length > 1) {
 		int i, j;
-		display_t *const displays = data->displays;
+		display_t *const displays = dspl_arr->ptr;
 		for (i = 0; i < length - 1; i++) {
 			int curr = i;
 			for (j = i + 1; j < length; j++)
@@ -58,17 +58,17 @@ static void sort_displays(data_t *const data) {
 	}
 }
 
-static void mark_default(data_t *const data) {
-	const int length = data->length;
+static void mark_default(dspl_arr_t *const dspl_arr) {
+	const int length = dspl_arr->length;
 	if (length) {
 		if (length == 1) {
-			data->displays[0].is_default = 1;
+			dspl_arr->ptr[0].is_default = 1;
 		} else {
-			HMONITOR const default_hndl = MonitorFromWindow(NULL, MONITOR_DEFAULTTOPRIMARY);
-			display_t *const displays = data->displays;
+			HMONITOR const default_display = MonitorFromWindow(NULL, MONITOR_DEFAULTTOPRIMARY);
+			display_t *const displays = dspl_arr->ptr;
 			int i;
 			for (i = 0; i < length; i++) {
-				if (displays[i].hndl == default_hndl) {
+				if (displays[i].hndl == default_display) {
 					displays[i].is_default = 1;
 					break;
 				}
@@ -78,34 +78,34 @@ static void mark_default(data_t *const data) {
 }
 
 void get_all(void **const displays, int *const length) {
-	data_t data = { NULL, 0 };
-	EnumDisplayMonitors(NULL, NULL, (MONITORENUMPROC)display_proc, (LPARAM)&data);
-	sort_displays(&data);
-	mark_default(&data);
-	*length = data.length;
-	*displays = (void*)data.displays;
+	dspl_arr_t dspl_arr = { NULL, 0 };
+	EnumDisplayMonitors(NULL, NULL, (MONITORENUMPROC)display_proc, (LPARAM)&dspl_arr);
+	sort_displays(&dspl_arr);
+	mark_default(&dspl_arr);
+	*length = dspl_arr.length;
+	*displays = (void*)dspl_arr.ptr;
 }
 
 void get_values(void *const displays, int index, int *const x, int *const y, int *const width, int *const height, int *const is_default, void **const internal) {
-	display_t *displays_d = (display_t*)displays;
-	*x = displays_d[index].x;
-	*y = displays_d[index].y;
-	*width = displays_d[index].width;
-	*height = displays_d[index].height;
-	*is_default = displays_d[index].is_default;
-	*internal = displays_d[index].hndl;
+	display_t *dspls = (display_t*)displays;
+	*x = dspls[index].x;
+	*y = dspls[index].y;
+	*width = dspls[index].width;
+	*height = dspls[index].height;
+	*is_default = dspls[index].is_default;
+	*internal = dspls[index].hndl;
 }
 
 void get_default(int *const x, int *const y, int *const width, int *const height, int *const is_default, void **const internal) {
-	HMONITOR const default_hndl = MonitorFromWindow(NULL, MONITOR_DEFAULTTOPRIMARY);
+	HMONITOR const default_display = MonitorFromWindow(NULL, MONITOR_DEFAULTTOPRIMARY);
 	MONITORINFO mi = { sizeof(mi) };
-	if (GetMonitorInfo(default_hndl, &mi)) {
+	if (GetMonitorInfo(default_display, &mi)) {
 		*x = mi.rcMonitor.left;
 		*y = mi.rcMonitor.top;
 		*width = mi.rcMonitor.right - mi.rcMonitor.left;
 		*height = mi.rcMonitor.bottom - mi.rcMonitor.top;
 		*is_default = 1;
-		*internal = default_hndl;
+		*internal = default_display;
 	} else {
 		*x = 0;
 		*y = 0;
@@ -119,17 +119,17 @@ void get_default(int *const x, int *const y, int *const width, int *const height
 void get_index(int *const index, void *const internal) {
 	int index_result = -1;
 	display_t displays[MAX_DISPLAYS];
-	data_t data = { displays, 0 };
-	EnumDisplayMonitors(NULL, NULL, (MONITORENUMPROC)display_proc, (LPARAM)&data);
-	sort_displays(&data);
-	const int length = data.length;
+	dspl_arr_t dspl_arr = { displays, 0 };
+	EnumDisplayMonitors(NULL, NULL, (MONITORENUMPROC)display_proc, (LPARAM)&dspl_arr);
+	sort_displays(&dspl_arr);
+	const int length = dspl_arr.length;
 	if (length) {
-		HMONITOR const default_hndl = MonitorFromWindow(NULL, MONITOR_DEFAULTTOPRIMARY);
-		display_t *const displays = data.displays;
+		HMONITOR const default_display = MonitorFromWindow(NULL, MONITOR_DEFAULTTOPRIMARY);
+		display_t *const displays = dspl_arr.ptr;
 		HMONITOR const display = (HMONITOR)internal;
 		int i;
 		for (i = 0; i < length; i++) {
-			if (displays[i].hndl == default_hndl) {
+			if (displays[i].hndl == default_display) {
 				index_result = i;
 				if (display == NULL)
 					break;
