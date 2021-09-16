@@ -1,9 +1,9 @@
 # Displays
 
-[![GoDoc](https://godoc.org/github.com/vbsw/displays?status.svg)](https://godoc.org/github.com/vbsw/displays) [![Stability: Maintenance](https://masterminds.github.io/stability/maintenance.svg)](https://masterminds.github.io/stability/maintenance.html)
+[![GoDoc](https://godoc.org/github.com/vbsw/displays?status.svg)](https://godoc.org/github.com/vbsw/displays) [![Stability: Experimental](https://masterminds.github.io/stability/experimental.svg)](https://masterminds.github.io/stability/experimental.html)
 
 ## About
-Displays is a package for Go. It offers functions to query displays and their current resolution. It is published on <https://github.com/vbsw/displays>.
+Displays is a package for Go. It provides a list of displays with their current resolution. It is published on <https://github.com/vbsw/displays>.
 
 ## Copyright
 Copyright 2021 Vitali Baumtrok (vbsw@mailbox.org).
