@@ -42,3 +42,5 @@ Update all tracked branches and all refs:
 - <https://golang.org/doc/install>
 - <https://git-scm.com/book/en/v2/Getting-Started-Installing-Git>
 - <https://dave.cheney.net/2013/10/12/how-to-use-conditional-compilation-with-the-go-build-tool>
+- <https://www.x.org/releases/X11R7.7/doc/libX11/libX11/libX11.html>
+- <https://cgit.freedesktop.org/xorg/lib/libXrandr/tree/src>

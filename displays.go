@@ -22,7 +22,7 @@ type Display struct {
 // Equals returns true, if both displays reference the same display.
 func (display *Display) Equals(dspl *Display) bool {
 	if dspl != nil {
-		return display.InternalData == dspl.InternalData
+		return display.InternalData == dspl.InternalData && display.X == dspl.X && display.Y == dspl.Y && display.Width == dspl.Width && display.Height == dspl.Height
 	}
 	return false
 }

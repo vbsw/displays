@@ -18,7 +18,6 @@ extern void get_all(void **displays, int *length);
 extern void get_values(void *displays, int index, int *x, int *y, int *width, int *height, int *is_default, void **internal);
 extern void get_default(int *x, int *y, int *width, int *height, int *is_default, void **internal);
 extern void get_index(int *index, void *internal);
-extern void free_memory(void *displays);
 #endif
 
 #ifdef __cplusplus

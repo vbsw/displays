@@ -9,7 +9,7 @@
 package displays
 
 // #cgo CFLAGS: -D_DISPLAYS_X
-// #cgo LDFLAGS: -lX11
+// #cgo LDFLAGS: -lX11 -lXrandr
 // #include "displays.h"
 import "C"
 import (
@@ -30,7 +30,7 @@ func All() []*Display {
 			C.get_values(displaysC, C.int(i), &x, &y, &width, &height, &isDefault, &internalData)
 			displays[i] = &Display{int(x), int(y), int(width), int(height), bool(isDefault != 0), internalData}
 		}
-		C.free_memory(displaysC)
+		//C.free_memory(displaysC)
 		return displays
 	}
 	return nil
