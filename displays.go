@@ -25,8 +25,8 @@ func (display *Display) Equals(dspl *Display) bool {
 	return false
 }
 
-// IsValid returns true, if display is available and active.
-func (display *Display) IsValid() bool {
+// Valid returns true, if display is available and active.
+func (display *Display) Valid() bool {
 	dspls := All()
 	for _, dspl := range dspls {
 		if display.Equals(dspl) {

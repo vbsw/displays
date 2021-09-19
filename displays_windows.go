@@ -26,11 +26,10 @@ func All() []*Display {
 		displays := make([]*Display, int(length))
 		for i := range displays {
 			var x, y, width, height, isDefault C.int
-			var internalData unsafe.Pointer
-			C.get_values(displaysC, C.int(i), &x, &y, &width, &height, &isDefault, &internalData)
-			displays[i] = &Display{int(x), int(y), int(width), int(height), bool(isDefault != 0), internalData}
+			C.get_values(displaysC, C.int(i), &x, &y, &width, &height, &isDefault)
+			displays[i] = &Display{int(x), int(y), int(width), int(height), i, bool(isDefault != 0)}
 		}
-		C.free_memory(displaysC)
+		//C.free_memory(displaysC)
 		return displays
 	}
 	return nil
@@ -39,20 +38,10 @@ func All() []*Display {
 // Default returns the default display.
 // At failure, nil is returned.
 func Default() *Display {
-	var x, y, width, height, isDefault C.int
-	var internalData unsafe.Pointer
-	C.get_default(&x, &y, &width, &height, &isDefault, &internalData)
-	if internalData != nil {
-		return &Display{int(x), int(y), int(width), int(height), bool(isDefault != 0), internalData}
+	var x, y, width, height, index, isDefault C.int
+	C.get_default(&x, &y, &width, &height, &index, &isDefault)
+	if index >= 0 {
+		return &Display{int(x), int(y), int(width), int(height), int(index), bool(isDefault != 0)}
 	}
 	return nil
-}
-
-// Index returns the index of display in list.
-// If display is not in list, the index of default display is returned.
-// At failure, -1 is returned.
-func (display *Display) Index() int {
-	var index C.int
-	C.get_index(&index, display.InternalData)
-	return int(index)
 }
