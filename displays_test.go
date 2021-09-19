@@ -34,7 +34,7 @@ func TestIndex(t *testing.T) {
 	display := Default()
 	if display == nil {
 		t.Error("nil returned")
-	} else if display.Index() < 0 {
+	} else if display.Index < 0 {
 		t.Error("wrong index")
 	}
 }

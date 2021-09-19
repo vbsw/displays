@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 typedef struct {
-	int x, y, width, height, is_default, index;
+	int x, y, width, height, is_default;
 } display_t;
 
 static display_t dspls[MAX_DISPLAYS];
@@ -28,7 +28,6 @@ static void set_dspls(XRRMonitorInfo *const monitors, const int length) {
 		dspls[i].width = monitors[i].width;
 		dspls[i].height = monitors[i].height;
 		dspls[i].is_default = monitors[i].primary;
-		dspls[i].index = i;
 	}
 }
 
@@ -65,17 +64,16 @@ void get_all(void **const displays, int *const length) {
 	*displays = (void*)dspls;
 }
 
-void get_values(void *const displays, int index, int *const x, int *const y, int *const width, int *const height, int *const is_default, void **const internal) {
+void get_values(void *const displays, int index, int *const x, int *const y, int *const width, int *const height, int *const is_default) {
 	display_t *dspls = (display_t*)displays;
 	*x = dspls[index].x;
 	*y = dspls[index].y;
 	*width = dspls[index].width;
 	*height = dspls[index].height;
 	*is_default = dspls[index].is_default;
-	*internal = &dspls[index];
 }
 
-void get_default(int *const x, int *const y, int *const width, int *const height, int *const is_default, void **const internal) {
+void get_default(int *const x, int *const y, int *const width, int *const height, int *const index, int *const is_default) {
 	if (dspls_len <= 0) {
 		dspls_len = 0;
 		Display *const dspl = XOpenDisplay(NULL);
@@ -102,38 +100,15 @@ void get_default(int *const x, int *const y, int *const width, int *const height
 		*y = dspls[i].y;
 		*width = dspls[i].width;
 		*height = dspls[i].height;
+		*index = i;
 		*is_default = dspls[i].is_default;
-		*internal = &dspls[i];
 	} else {
 		*x = 0;
 		*y = 0;
 		*width = 0;
 		*height = 0;
-		*is_default = 0;
-		*internal = NULL;
-	}
-}
-
-void get_index(int *const index, void *const internal) {
-	if (dspls_len > 0) {
-		display_t *dspl = NULL;
-		if (internal)
-			dspl = (display_t*)internal;
-		if (dspl && dspl->index >= 0 && dspl->index <= dspls_len)
-			*index = dspl->index;
-		else {
-			int i;
-			for (i = 0; i < dspls_len; i++) {
-				if (dspls[i].is_default) {
-					*index = i;
-					break;
-				}
-			}
-			if (i >= dspls_len)
-				*index = 0;
-		}
-	} else {
 		*index = -1;
+		*is_default = 0;
 	}
 }
 

@@ -9,20 +9,29 @@ package displays
 
 import (
 	"strconv"
-	"unsafe"
 )
 
 // Display holds metrics of a display.
 type Display struct {
-	X, Y, Width, Height int
-	Default             bool
-	InternalData        unsafe.Pointer
+	X, Y, Width, Height, Index int
+	Default                    bool
 }
 
 // Equals returns true, if both displays reference the same display.
 func (display *Display) Equals(dspl *Display) bool {
 	if dspl != nil {
-		return display.InternalData == dspl.InternalData && display.X == dspl.X && display.Y == dspl.Y && display.Width == dspl.Width && display.Height == dspl.Height
+		return display.Index == dspl.Index && display.X == dspl.X && display.Y == dspl.Y && display.Width == dspl.Width && display.Height == dspl.Height
+	}
+	return false
+}
+
+// IsValid returns true, if display is available and active.
+func (display *Display) IsValid() bool {
+	dspls := All()
+	for _, dspl := range dspls {
+		if display.Equals(dspl) {
+			return true
+		}
 	}
 	return false
 }
